@@ -22,11 +22,21 @@ const Content = ({ parts }) => {
   );
 };
 
+const Total = ({ parts }) => {
+  const sum =
+    parts[0].exercises +
+    parts[1].exercises +
+    parts[2].exercises +
+    parts[3].exercises;
+  return <h4>total of {sum} exercises</h4>;
+};
+
 const Course = ({ course }) => {
   return (
     <div>
       <Header name={course.name} />
       <Content parts={course.parts} />
+      <Total parts={course.parts} />
     </div>
   );
 };
@@ -50,6 +60,11 @@ const App = () => {
         name: "State of a component",
         exercises: 14,
         id: 3,
+      },
+      {
+        name: "Redux",
+        exercises: 11,
+        id: 4,
       },
     ],
   };
