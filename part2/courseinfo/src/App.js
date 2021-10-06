@@ -23,11 +23,8 @@ const Content = ({ parts }) => {
 };
 
 const Total = ({ parts }) => {
-  const sum =
-    parts[0].exercises +
-    parts[1].exercises +
-    parts[2].exercises +
-    parts[3].exercises;
+  const sum = parts.reduce((sum, currPart) => sum + currPart.exercises, 0);
+
   return <h4>total of {sum} exercises</h4>;
 };
 
