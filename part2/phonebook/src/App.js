@@ -1,5 +1,8 @@
 import React, { useState } from "react";
-import Person from "./component/Person";
+import Filter from "./component/Filter";
+
+import PersonForm from "./component/PersonForm";
+import Persons from "./component/Persons";
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -27,7 +30,7 @@ const App = () => {
     setStringFilter(event.target.value);
   };
 
-  const addName = (event) => {
+  const addPerson = (event) => {
     event.preventDefault();
 
     const existing = persons.find((p) => p.name === newName);
@@ -38,11 +41,13 @@ const App = () => {
       const newObject = {
         name: newName,
         number: newNumber,
+        id: persons.length + 1,
       };
       setPersons(persons.concat(newObject));
     }
 
     setNewName(" ");
+    setNewNumber("");
   };
 
   const personsToShow =
@@ -55,27 +60,25 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+
       <div>
         filter shown with:{" "}
-        <input value={filterString} onChange={handleFilterStringChange} />
+        <Filter value={filterString} onChange={handleFilterStringChange} />
       </div>
+
       <h2>add a new</h2>
-      <form onSubmit={addName}>
-        <div>
-          name: <input value={newName} onChange={handleNameChange} />
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={handleNumberChange} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+
+      <PersonForm
+        handleNameChange={handleNameChange}
+        handleNumberChange={handleNumberChange}
+        newName={newName}
+        newNumber={newNumber}
+        addPerson={addPerson}
+      />
+
       <h2>Numbers</h2>
 
-      {personsToShow.map((person) => (
-        <Person key={person.name} person={person} />
-      ))}
+      <Persons persons={personsToShow} />
 
       <div>debug: {newName}</div>
     </div>
