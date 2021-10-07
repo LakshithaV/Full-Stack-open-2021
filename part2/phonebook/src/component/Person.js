@@ -1,7 +1,12 @@
 import React from "react";
 
 const Person = ({ person }) => {
-  return <li>{person.name}</li>;
+  console.log(person.name);
+  return (
+    <p>
+      {person.name} {person.number}
+    </p>
+  );
 };
 
 export default Person;
