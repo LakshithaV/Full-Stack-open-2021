@@ -12,7 +12,11 @@ const Countries = ({ countries, setValue }) => {
     return (
       <div>
         {countries.map((c) => (
-          <div key={c.alpha2Code}>{c.name}</div>
+          <div key={c.alpha2Code}>
+            {c.name}
+
+            <button onClick={() => setValue(c.name)}>show</button>
+          </div>
         ))}
       </div>
     );
