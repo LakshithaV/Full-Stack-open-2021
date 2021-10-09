@@ -3,18 +3,27 @@ import Filter from "./component/Filter";
 import PersonForm from "./component/PersonForm";
 import Persons from "./component/Persons";
 import personService from "./services/persons";
+import Notification from "./component/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filterString, setStringFilter] = useState("");
+  const [notification, setNotification] = useState(null);
 
   useEffect(() => {
     personService.getAll().then((initialPersons) => {
       setPersons(initialPersons);
     });
   }, []);
+
+  const notifyWith = (message, type = "success") => {
+    setNotification({ message, type });
+    setTimeout(() => {
+      setNotification(null);
+    }, 5000);
+  };
 
   const addPerson = (event) => {
     event.preventDefault();
@@ -36,7 +45,7 @@ const App = () => {
                 person.id !== existing.id ? person : retunedPerson
               )
             );
-            alert(`Changed number of  ${existing.name}`);
+            notifyWith(`Changed number of  ${existing.name}`);
             setNewName("");
             setNewNumber("");
           });
@@ -49,13 +58,13 @@ const App = () => {
         })
         .then((addedPerson) => {
           setPersons(persons.concat(addedPerson));
-          alert(`Added ${newName}`);
+          notifyWith(`Added ${newName}`);
           setNewName("");
           setNewNumber("");
         })
         .catch((error) => {
           console.log(error.response.data.error);
-          alert(`${error.response.data.error} `, "error");
+          notifyWith(`${error.response.data.error} `, "error");
         });
     }
   };
@@ -68,11 +77,11 @@ const App = () => {
         .remove(id)
         .then((response) => {
           setPersons(persons.filter((p) => p.id !== id));
-          alert(`Deleted ${toDelete.name}`);
+          notifyWith(`Deleted ${toDelete.name}`);
         })
         .catch(() => {
           setPersons(persons.filter((p) => p.id !== id));
-          alert(`${toDelete.name} had already been removed`, "error");
+          notifyWith(`${toDelete.name} had already been removed`, "error");
         });
     }
   };
@@ -102,6 +111,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+
+      <Notification notification={notification} />
 
       <div>
         filter shown with:{" "}
