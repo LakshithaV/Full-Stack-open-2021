@@ -4,6 +4,7 @@ import noteService from "./services/notes";
 
 const App = () => {
   const [notes, setNotes] = useState([]);
+  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
     noteService.getAll().then((initialNotes) => {
@@ -12,12 +13,18 @@ const App = () => {
     });
   }, []);
 
+  const notesToShow = showAll ? notes : notes.filter((note) => note.important);
+
   return (
     <div>
       <h2>Notes</h2>
-      
+      <div>
+        <button onClick={() => setShowAll(!showAll)}>
+          show {showAll ? "important" : "all"}
+        </button>
+      </div>
       <ul>
-        {notes.map((note) => (
+        {notesToShow.map((note) => (
           <Note key={note.id} note={note} />
         ))}
       </ul>
