@@ -3,6 +3,7 @@ import axios from "axios";
 import Filter from "./component/Filter";
 import PersonForm from "./component/PersonForm";
 import Persons from "./component/Persons";
+import personService from "./services/persons";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -11,12 +12,31 @@ const App = () => {
   const [filterString, setStringFilter] = useState("");
 
   useEffect(() => {
-    console.log("effect");
-    axios.get("http://localhost:3001/persons").then((responce) => {
-      console.log("promise fulfilled");
-      setPersons(responce.data);
+    personService.getAll().then((initialPersons) => {
+      setPersons(initialPersons);
     });
   }, []);
+
+  const addPerson = (event) => {
+    event.preventDefault();
+
+    const existing = persons.find((p) => p.name === newName);
+
+    if (existing) {
+      window.alert(`${newName} is already added to phonebook`);
+    } else {
+      const newObject = {
+        name: newName,
+        number: newNumber,
+      };
+      personService.create(newObject).then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson));
+      });
+    }
+
+    setNewName(" ");
+    setNewNumber("");
+  };
 
   const handleNameChange = (event) => {
     console.log(event.target.value);
@@ -31,26 +51,6 @@ const App = () => {
   const handleFilterStringChange = (event) => {
     console.log(event.target.value);
     setStringFilter(event.target.value);
-  };
-
-  const addPerson = (event) => {
-    event.preventDefault();
-
-    const existing = persons.find((p) => p.name === newName);
-
-    if (existing) {
-      window.alert(`${newName} is already added to phonebook`);
-    } else {
-      const newObject = {
-        name: newName,
-        number: newNumber,
-        id: persons.length + 1,
-      };
-      setPersons(persons.concat(newObject));
-    }
-
-    setNewName(" ");
-    setNewNumber("");
   };
 
   const personsToShow =
