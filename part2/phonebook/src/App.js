@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import Filter from "./component/Filter";
 import PersonForm from "./component/PersonForm";
 import Persons from "./component/Persons";
@@ -36,6 +35,23 @@ const App = () => {
 
     setNewName(" ");
     setNewNumber("");
+  };
+
+  const deletePerson = (id) => {
+    const toDelete = persons.find((p) => p.id === id);
+    const ok = window.confirm(`Delete ${toDelete.name}`);
+    if (ok) {
+      personService
+        .remove(id)
+        .then((response) => {
+          setPersons(persons.filter((p) => p.id !== id));
+          alert(`Deleted ${toDelete.name}`);
+        })
+        .catch(() => {
+          setPersons(persons.filter((p) => p.id !== id));
+          alert(`${toDelete.name} had already been removed`, "error");
+        });
+    }
   };
 
   const handleNameChange = (event) => {
@@ -81,7 +97,7 @@ const App = () => {
 
       <h2>Numbers</h2>
 
-      <Persons persons={personsToShow} />
+      <Persons persons={personsToShow} deletePerson={deletePerson} />
 
       <div>debug: {newName}</div>
     </div>
