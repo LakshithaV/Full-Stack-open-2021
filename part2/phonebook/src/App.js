@@ -20,21 +20,44 @@ const App = () => {
     event.preventDefault();
 
     const existing = persons.find((p) => p.name === newName);
-
     if (existing) {
-      window.alert(`${newName} is already added to phonebook`);
+      const ok = window.confirm(
+        `${existing.name} already in phonebook, replace the old number with new one?`
+      );
+      if (ok) {
+        personService
+          .update(existing.id, {
+            name: existing.name,
+            number: newNumber,
+          })
+          .then((retunedPerson) => {
+            setPersons(
+              persons.map((person) =>
+                person.id !== existing.id ? person : retunedPerson
+              )
+            );
+            alert(`Changed number of  ${existing.name}`);
+            setNewName("");
+            setNewNumber("");
+          });
+      }
     } else {
-      const newObject = {
-        name: newName,
-        number: newNumber,
-      };
-      personService.create(newObject).then((returnedPerson) => {
-        setPersons(persons.concat(returnedPerson));
-      });
+      personService
+        .create({
+          name: newName,
+          number: newNumber,
+        })
+        .then((addedPerson) => {
+          setPersons(persons.concat(addedPerson));
+          alert(`Added ${newName}`);
+          setNewName("");
+          setNewNumber("");
+        })
+        .catch((error) => {
+          console.log(error.response.data.error);
+          alert(`${error.response.data.error} `, "error");
+        });
     }
-
-    setNewName(" ");
-    setNewNumber("");
   };
 
   const deletePerson = (id) => {
