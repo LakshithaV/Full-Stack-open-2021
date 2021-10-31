@@ -1,24 +1,36 @@
-import axios from "axios";
-const baseUrl = "/api/notes";
+const mongoose = require("mongoose");
 
-const getAll = () => {
-  const request = axios.get(baseUrl);
-  //console.log("request: ", request);
-  return request.then((response) => response.data);
-};
+mongoose.set("useFindAndModify", false);
 
-const create = (newObject) => {
-  const request = axios.post(baseUrl, newObject);
-  return request.then((response) => response.data);
-};
+const url = process.env.MONGODB_URI;
 
-const update = (id, newObject) => {
-  const request = axios.put(`${baseUrl}/${id}`, newObject);
-  return request.then((response) => response.data);
-};
+console.log("commecting to", url);
 
-export default {
-  getAll,
-  create,
-  update,
-};
+mongoose
+  .connect(url)
+  .then((result) => {
+    console.log("connected to MongoDB");
+  })
+  .catch((error) => {
+    console.log("error connection to MongoDB:", error.message);
+  });
+
+const noteSchema = new mongoose.Schema({
+  content: {
+    type: String,
+    required: true,
+    minlength: 5,
+  },
+  date: Date,
+  important: Boolean,
+});
+
+noteSchema.set("toJSON", {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString();
+    delete returnedObject._id;
+    delete returnedObject.__v;
+  },
+});
+
+module.exports = mongoose.model("Note", noteSchema);
