@@ -17,7 +17,6 @@ app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms :body")
 );
 
-/*  GET  */
 app.get("/info", (request, response) => {
   Person.find({}).then((persons) => {
     const content = `
@@ -47,7 +46,6 @@ app.get("/api/persons/:id", (request, response, next) => {
     .catch((error) => next(error));
 });
 
-/*  POST  */
 app.post("/api/persons", (request, response, next) => {
   const body = request.body;
 
@@ -66,6 +64,16 @@ app.post("/api/persons", (request, response, next) => {
     .save()
     .then((savedPerson) => {
       response.json(savedPerson.toJSON());
+    })
+    .catch((error) => next(error));
+});
+
+app.put("/api/persons/:id", (request, response, next) => {
+  const { name, number } = request.body;
+
+  Person.findByIdAndUpdate(request.params.id, { name, number }, { new: true })
+    .then((updatedPerson) => {
+      response.json(updatedPerson.toJSON());
     })
     .catch((error) => next(error));
 });
